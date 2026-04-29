@@ -59,7 +59,7 @@ local function getBestParent()
 end
 
 local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "JunkieSpeedEscape"
+screenGui.Name = "jake's Hub"
 screenGui.Parent = getBestParent()
 screenGui.ResetOnSpawn = false
 
@@ -132,7 +132,7 @@ subText.Parent = titleBar
 subText.Size = UDim2.new(1, -140, 0, 18)
 subText.Position = UDim2.new(0, 60, 0, 32)
 subText.BackgroundTransparency = 1
-subText.Text = "Junkie Development System"
+subText.Text = "jakes Script"
 subText.TextColor3 = Color3.fromRGB(0, 255, 0)
 subText.TextSize = 10
 subText.Font = Enum.Font.Gotham
@@ -387,7 +387,7 @@ local footerText = Instance.new("TextLabel")
 footerText.Parent = footer
 footerText.Size = UDim2.new(1, 0, 1, 0)
 footerText.BackgroundTransparency = 1
-footerText.Text = "Junkie Development System | +1 Speed Escape"
+footerText.Text = "Jakes Hub | +1 Speed Escape"
 footerText.TextColor3 = Color3.fromRGB(0, 150, 0)
 footerText.TextSize = 9
 footerText.Font = Enum.Font.Gotham
@@ -513,14 +513,14 @@ end)
 -- ============================================
 print("========================================")
 print("    +1 SPEED ESCAPE KEYBOARD")
-print("    Junkie Development System")
+print("    JAKES HUB")
 print("    Protected by Key System")
 print("    Press K to toggle spam")
 print("========================================")
 
 pcall(function()
     game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Junkie Dev System",
+        Title = "Jakes Hub",
         Text = "+1 Speed Escape Loaded | Press K to spam",
         Duration = 3
     })
