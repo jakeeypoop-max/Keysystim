@@ -130,16 +130,6 @@ end
 --! GUI & MAIN SCRIPT EXECUTION
 -------------------------------------------------------------------------------
 
--- JAKE'S HUB KEY SYSTEM - FULLY WORKING VERSION
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-
-local function StartMainScript()
-    -- This will be replaced with your actual main script loading
-    print("Starting Jake's Hub Main Script...")
-    -- loadstring(game:HttpGet("YOUR_MAIN_SCRIPT_URL"))()
-end
-
 local function CreateGUI()
     print("Creating Jake's Hub GUI...")
     
@@ -166,8 +156,8 @@ local function CreateGUI()
     
     -- Main Frame
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 420, 0, 540)
-    MainFrame.Position = UDim2.new(0.5, -210, 0.5, -270)
+    MainFrame.Size = UDim2.new(0, 420, 0, 460)
+    MainFrame.Position = UDim2.new(0.5, -210, 0.5, -230)
     MainFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
     MainFrame.BackgroundTransparency = 0
     MainFrame.BorderSizePixel = 0
@@ -214,7 +204,7 @@ local function CreateGUI()
     Title.Size = UDim2.new(1, -80, 0, 45)
     Title.Position = UDim2.new(0, 20, 0, 15)
     Title.BackgroundTransparency = 1
-    Title.Text = "JAKE'S HUB"
+    Title.Text = Config.HubName or "JAKE'S HUB"
     Title.TextColor3 = Color3.fromRGB(0, 200, 255)
     Title.TextSize = 32
     Title.Font = Enum.Font.GothamBlack
@@ -226,7 +216,7 @@ local function CreateGUI()
     Subtitle.Size = UDim2.new(1, -80, 0, 25)
     Subtitle.Position = UDim2.new(0, 22, 0, 52)
     Subtitle.BackgroundTransparency = 1
-    Subtitle.Text = "PREMIUM ROBLOX EXECUTIVE CHEAT"
+    Subtitle.Text = Config.HubDescription or "PREMIUM ROBLOX EXECUTIVE CHEAT"
     Subtitle.TextColor3 = Color3.fromRGB(150, 150, 170)
     Subtitle.TextSize = 11
     Subtitle.Font = Enum.Font.Gotham
@@ -256,95 +246,141 @@ local function CreateGUI()
     
     -- Content Frame
     local ContentFrame = Instance.new("Frame")
-    ContentFrame.Size = UDim2.new(0.92, 0, 0, 360)
+    ContentFrame.Size = UDim2.new(0.92, 0, 0, 280)
     ContentFrame.Position = UDim2.new(0.04, 0, 0, 95)
     ContentFrame.BackgroundTransparency = 1
     ContentFrame.Parent = MainFrame
     
-    -- Discord Button
-    local DiscordBtn = Instance.new("TextButton")
-    DiscordBtn.Size = UDim2.new(1, 0, 0, 52)
-    DiscordBtn.Position = UDim2.new(0, 0, 0, 0)
-    DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-    DiscordBtn.Text = "     JOIN OUR DISCORD"
-    DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    DiscordBtn.TextSize = 15
-    DiscordBtn.Font = Enum.Font.GothamBold
-    DiscordBtn.TextXAlignment = Enum.TextXAlignment.Left
-    DiscordBtn.BorderSizePixel = 0
-    DiscordBtn.Parent = ContentFrame
+    -- Track Y position for dynamic placement
+    local currentY = 0
     
-    local DiscordCorner = Instance.new("UICorner")
-    DiscordCorner.CornerRadius = UDim.new(0, 10)
-    DiscordCorner.Parent = DiscordBtn
+    -- Discord Button (only if enabled in Config)
+    if Config.ShowDiscord then
+        local DiscordBtn = Instance.new("TextButton")
+        DiscordBtn.Size = UDim2.new(1, 0, 0, 52)
+        DiscordBtn.Position = UDim2.new(0, 0, 0, currentY)
+        DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+        DiscordBtn.Text = "     JOIN OUR DISCORD"
+        DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        DiscordBtn.TextSize = 15
+        DiscordBtn.Font = Enum.Font.GothamBold
+        DiscordBtn.TextXAlignment = Enum.TextXAlignment.Left
+        DiscordBtn.BorderSizePixel = 0
+        DiscordBtn.Parent = ContentFrame
+        
+        local DiscordCorner = Instance.new("UICorner")
+        DiscordCorner.CornerRadius = UDim.new(0, 10)
+        DiscordCorner.Parent = DiscordBtn
+        
+        local DiscordIcon = Instance.new("ImageLabel")
+        DiscordIcon.Size = UDim2.new(0, 24, 0, 24)
+        DiscordIcon.Position = UDim2.new(0, 18, 0.5, -12)
+        DiscordIcon.BackgroundTransparency = 1
+        DiscordIcon.Image = "rbxassetid://18505728201"
+        DiscordIcon.Parent = DiscordBtn
+        
+        DiscordBtn.MouseButton1Click:Connect(function()
+            fSetClipboard(Config.DiscordURL)
+            StatusLabel.Text = "✓ Discord link copied!"
+            StatusLabel.TextColor3 = Color3.fromRGB(88, 101, 242)
+            task.wait(2)
+            StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        end)
+        
+        currentY = currentY + 62
+    end
     
-    local DiscordIcon = Instance.new("ImageLabel")
-    DiscordIcon.Size = UDim2.new(0, 24, 0, 24)
-    DiscordIcon.Position = UDim2.new(0, 18, 0.5, -12)
-    DiscordIcon.BackgroundTransparency = 1
-    DiscordIcon.Image = "rbxassetid://18505728201"
-    DiscordIcon.Parent = DiscordBtn
+    -- Instagram Button (only if enabled in Config)
+    if Config.ShowInstagram then
+        local InstaBtn = Instance.new("TextButton")
+        InstaBtn.Size = UDim2.new(1, 0, 0, 52)
+        InstaBtn.Position = UDim2.new(0, 0, 0, currentY)
+        InstaBtn.BackgroundColor3 = Color3.fromRGB(225, 48, 108)
+        InstaBtn.Text = "     FOLLOW INSTAGRAM"
+        InstaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        InstaBtn.TextSize = 15
+        InstaBtn.Font = Enum.Font.GothamBold
+        InstaBtn.TextXAlignment = Enum.TextXAlignment.Left
+        InstaBtn.BorderSizePixel = 0
+        InstaBtn.Parent = ContentFrame
+        
+        local InstaCorner = Instance.new("UICorner")
+        InstaCorner.CornerRadius = UDim.new(0, 10)
+        InstaCorner.Parent = InstaBtn
+        
+        local InstaIcon = Instance.new("ImageLabel")
+        InstaIcon.Size = UDim2.new(0, 24, 0, 24)
+        InstaIcon.Position = UDim2.new(0, 18, 0.5, -12)
+        InstaIcon.BackgroundTransparency = 1
+        InstaIcon.Image = "rbxassetid://18355586382"
+        InstaIcon.Parent = InstaBtn
+        
+        InstaBtn.MouseButton1Click:Connect(function()
+            fSetClipboard(Config.InstagramURL)
+            StatusLabel.Text = "✓ Instagram link copied!"
+            StatusLabel.TextColor3 = Color3.fromRGB(225, 48, 108)
+            task.wait(2)
+            StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        end)
+        
+        currentY = currentY + 62
+    end
     
-    -- Instagram Button
-    local InstaBtn = Instance.new("TextButton")
-    InstaBtn.Size = UDim2.new(1, 0, 0, 52)
-    InstaBtn.Position = UDim2.new(0, 0, 0, 62)
-    InstaBtn.BackgroundColor3 = Color3.fromRGB(225, 48, 108)
-    InstaBtn.Text = "     FOLLOW INSTAGRAM"
-    InstaBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    InstaBtn.TextSize = 15
-    InstaBtn.Font = Enum.Font.GothamBold
-    InstaBtn.TextXAlignment = Enum.TextXAlignment.Left
-    InstaBtn.BorderSizePixel = 0
-    InstaBtn.Parent = ContentFrame
+    -- YouTube Button (only if enabled in Config)
+    if Config.ShowYoutube then
+        local YTBtn = Instance.new("TextButton")
+        YTBtn.Size = UDim2.new(1, 0, 0, 52)
+        YTBtn.Position = UDim2.new(0, 0, 0, currentY)
+        YTBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        YTBtn.Text = "     SUBSCRIBE ON YT"
+        YTBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        YTBtn.TextSize = 15
+        YTBtn.Font = Enum.Font.GothamBold
+        YTBtn.TextXAlignment = Enum.TextXAlignment.Left
+        YTBtn.BorderSizePixel = 0
+        YTBtn.Parent = ContentFrame
+        
+        local YTCorner = Instance.new("UICorner")
+        YTCorner.CornerRadius = UDim.new(0, 10)
+        YTCorner.Parent = YTBtn
+        
+        local YTIcon = Instance.new("ImageLabel")
+        YTIcon.Size = UDim2.new(0, 24, 0, 24)
+        YTIcon.Position = UDim2.new(0, 18, 0.5, -12)
+        YTIcon.BackgroundTransparency = 1
+        YTIcon.Image = "rbxassetid://82532989017804"
+        YTIcon.Parent = YTBtn
+        
+        YTBtn.MouseButton1Click:Connect(function()
+            fSetClipboard(Config.YoutubeURL)
+            StatusLabel.Text = "✓ YouTube link copied!"
+            StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+            task.wait(2)
+            StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        end)
+        
+        currentY = currentY + 62
+    end
     
-    local InstaCorner = Instance.new("UICorner")
-    InstaCorner.CornerRadius = UDim.new(0, 10)
-    InstaCorner.Parent = InstaBtn
+    -- Add separator if any social buttons were shown
+    if Config.ShowDiscord or Config.ShowInstagram or Config.ShowYoutube then
+        local Separator = Instance.new("Frame")
+        Separator.Size = UDim2.new(1, 0, 0, 1)
+        Separator.Position = UDim2.new(0, 0, 0, currentY - 10)
+        Separator.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+        Separator.BorderSizePixel = 0
+        Separator.Parent = ContentFrame
+    end
     
-    local InstaIcon = Instance.new("ImageLabel")
-    InstaIcon.Size = UDim2.new(0, 24, 0, 24)
-    InstaIcon.Position = UDim2.new(0, 18, 0.5, -12)
-    InstaIcon.BackgroundTransparency = 1
-    InstaIcon.Image = "rbxassetid://18355586382"
-    InstaIcon.Parent = InstaBtn
+    -- Key Input Box position (after social buttons)
+    local inputStartY = currentY + 15
     
-    -- YouTube Button
-    local YTBtn = Instance.new("TextButton")
-    YTBtn.Size = UDim2.new(1, 0, 0, 52)
-    YTBtn.Position = UDim2.new(0, 0, 0, 124)
-    YTBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    YTBtn.Text = "     SUBSCRIBE ON YT"
-    YTBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    YTBtn.TextSize = 15
-    YTBtn.Font = Enum.Font.GothamBold
-    YTBtn.TextXAlignment = Enum.TextXAlignment.Left
-    YTBtn.BorderSizePixel = 0
-    YTBtn.Parent = ContentFrame
-    
-    local YTCorner = Instance.new("UICorner")
-    YTCorner.CornerRadius = UDim.new(0, 10)
-    YTCorner.Parent = YTBtn
-    
-    local YTIcon = Instance.new("ImageLabel")
-    YTIcon.Size = UDim2.new(0, 24, 0, 24)
-    YTIcon.Position = UDim2.new(0, 18, 0.5, -12)
-    YTIcon.BackgroundTransparency = 1
-    YTIcon.Image = "rbxassetid://82532989017804"
-    YTIcon.Parent = YTBtn
-    
-    -- Separator
-    local Separator = Instance.new("Frame")
-    Separator.Size = UDim2.new(1, 0, 0, 1)
-    Separator.Position = UDim2.new(0, 0, 0, 192)
-    Separator.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    Separator.BorderSizePixel = 0
-    Separator.Parent = ContentFrame
-    
-    -- Key Input Box
     local KeyInput = Instance.new("TextBox")
     KeyInput.Size = UDim2.new(1, 0, 0, 48)
-    KeyInput.Position = UDim2.new(0, 0, 0, 205)
+    KeyInput.Position = UDim2.new(0, 0, 0, inputStartY)
     KeyInput.PlaceholderText = " 🔑  ENTER YOUR LICENSE KEY"
     KeyInput.Text = ""
     KeyInput.Font = Enum.Font.GothamSemibold
@@ -363,7 +399,7 @@ local function CreateGUI()
     -- Verify Button
     local VerifyBtn = Instance.new("TextButton")
     VerifyBtn.Size = UDim2.new(0.48, 0, 0, 48)
-    VerifyBtn.Position = UDim2.new(0, 0, 0, 265)
+    VerifyBtn.Position = UDim2.new(0, 0, 0, inputStartY + 58)
     VerifyBtn.Text = "VERIFY KEY"
     VerifyBtn.Font = Enum.Font.GothamBold
     VerifyBtn.TextSize = 15
@@ -376,10 +412,10 @@ local function CreateGUI()
     VerifyCorner.CornerRadius = UDim.new(0, 10)
     VerifyCorner.Parent = VerifyBtn
     
-    -- Get Key Button
+    -- Get Key Button (uses PlatoBoost to get actual key link)
     local GetKeyBtn = Instance.new("TextButton")
     GetKeyBtn.Size = UDim2.new(0.48, 0, 0, 48)
-    GetKeyBtn.Position = UDim2.new(0.52, 0, 0, 265)
+    GetKeyBtn.Position = UDim2.new(0.52, 0, 0, inputStartY + 58)
     GetKeyBtn.Text = "GET FREE KEY"
     GetKeyBtn.Font = Enum.Font.GothamBold
     GetKeyBtn.TextSize = 15
@@ -396,7 +432,7 @@ local function CreateGUI()
     local StatusLabel = Instance.new("TextLabel")
     StatusLabel.Name = "StatusLabel"
     StatusLabel.Size = UDim2.new(0.92, 0, 0, 38)
-    StatusLabel.Position = UDim2.new(0.04, 0, 0, 490)
+    StatusLabel.Position = UDim2.new(0.04, 0, 0, 410)
     StatusLabel.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
     StatusLabel.BackgroundTransparency = 0.7
     StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
@@ -409,50 +445,29 @@ local function CreateGUI()
     StatusCorner.CornerRadius = UDim.new(0, 8)
     StatusCorner.Parent = StatusLabel
     
+    -- Adjust main frame height based on content
+    local totalHeight = 460
+    if not Config.ShowDiscord and not Config.ShowInstagram and not Config.ShowYoutube then
+        MainFrame.Size = UDim2.new(0, 420, 0, 380)
+        StatusLabel.Position = UDim2.new(0.04, 0, 0, 330)
+        totalHeight = 380
+    end
+    
     -- Hover Effects
     local function AddHover(btn, defaultColor, hoverColor)
         btn.MouseEnter:Connect(function()
             btn.BackgroundColor3 = hoverColor
-            btn:TweenSize(UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset + 2, btn.Size.Y.Scale, btn.Size.Y.Offset), "Out", "Quad", 0.1, true)
         end)
         btn.MouseLeave:Connect(function()
             btn.BackgroundColor3 = defaultColor
-            btn:TweenSize(UDim2.new(btn.Size.X.Scale, btn.Size.X.Offset - 2, btn.Size.Y.Scale, btn.Size.Y.Offset), "Out", "Quad", 0.1, true)
         end)
     end
     
     AddHover(VerifyBtn, Color3.fromRGB(0, 150, 255), Color3.fromRGB(0, 170, 255))
     AddHover(GetKeyBtn, Color3.fromRGB(28, 28, 36), Color3.fromRGB(40, 40, 50))
-    AddHover(DiscordBtn, Color3.fromRGB(88, 101, 242), Color3.fromRGB(100, 113, 255))
-    AddHover(InstaBtn, Color3.fromRGB(225, 48, 108), Color3.fromRGB(245, 68, 128))
-    AddHover(YTBtn, Color3.fromRGB(255, 0, 0), Color3.fromRGB(255, 40, 40))
     AddHover(CloseBtn, Color3.fromRGB(255, 50, 50), Color3.fromRGB(255, 30, 30))
     
-    -- Button Click Functions
-    DiscordBtn.MouseButton1Click:Connect(function()
-        StatusLabel.Text = "✓ Discord link copied!"
-        StatusLabel.TextColor3 = Color3.fromRGB(88, 101, 242)
-        task.wait(2)
-        StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
-        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
-    end)
-    
-    InstaBtn.MouseButton1Click:Connect(function()
-        StatusLabel.Text = "✓ Instagram link copied!"
-        StatusLabel.TextColor3 = Color3.fromRGB(225, 48, 108)
-        task.wait(2)
-        StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
-        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
-    end)
-    
-    YTBtn.MouseButton1Click:Connect(function()
-        StatusLabel.Text = "✓ YouTube link copied!"
-        StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-        task.wait(2)
-        StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
-        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
-    end)
-    
+    -- Verify Button Logic (uses actual PlatoBoost verification)
     VerifyBtn.MouseButton1Click:Connect(function()
         local key = KeyInput.Text
         if key == "" then
@@ -464,21 +479,20 @@ local function CreateGUI()
             return
         end
         
-        StatusLabel.Text = "🔄 Verifying key..."
+        StatusLabel.Text = "🔄 Verifying key with PlatoBoost..."
         StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
         
-        -- SIMULATED VERIFICATION - REPLACE WITH YOUR ACTUAL VERIFICATION
-        task.wait(1)
+        -- Use the actual redeemKey function from your PlatoBoost system
+        local success, msg = redeemKey(key)
         
-        -- For testing: any key with "JAKE" works
-        if string.upper(string.sub(key, 1, 4)) == "JAKE" then
+        if success then
             StatusLabel.Text = "✅ Key verified! Loading Jake's Hub..."
             StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
             task.wait(1)
             ScreenGui:Destroy()
             StartMainScript()
         else
-            StatusLabel.Text = "❌ Invalid license key!"
+            StatusLabel.Text = "❌ " .. msg
             StatusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
             task.wait(2)
             StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
@@ -486,21 +500,54 @@ local function CreateGUI()
         end
     end)
     
+    -- Get Key Button Logic (uses PlatoBoost to get actual key link)
     GetKeyBtn.MouseButton1Click:Connect(function()
-        StatusLabel.Text = "🔗 Getting free key link..."
+        StatusLabel.Text = "🔗 Fetching key link from PlatoBoost..."
         StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
         
-        task.wait(0.5)
+        -- Use the actual cacheLink function from your PlatoBoost system
+        local success, link = cacheLink()
         
-        -- Replace with your actual key link
-        local keyLink = "https://discord.gg/jakeshub"
-        
-        StatusLabel.Text = "✓ Key link copied to clipboard!"
-        StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
-        task.wait(2)
-        StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
-        StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        if success and link then
+            fSetClipboard(link)
+            StatusLabel.Text = "✓ Key link copied to clipboard!"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+            task.wait(2)
+            StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        else
+            StatusLabel.Text = "❌ Failed to fetch key link: " .. tostring(link)
+            StatusLabel.TextColor3 = Color3.fromRGB(255, 50, 50)
+            task.wait(2)
+            StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+        end
     end)
+    
+    -- Auto Load Saved Key
+    if isfile and isfile(Config.KeyFileName) then
+        local savedKey = readfile(Config.KeyFileName)
+        if savedKey and savedKey ~= "" then
+            StatusLabel.Text = "🔄 Found saved key, verifying..."
+            StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+            task.spawn(function()
+                local success, msg = redeemKey(savedKey)
+                if success then
+                    StatusLabel.Text = "✅ Auto-login successful! Loading Jake's Hub..."
+                    StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+                    task.wait(1)
+                    ScreenGui:Destroy()
+                    StartMainScript()
+                else
+                    StatusLabel.Text = "⚠️ Saved key expired or invalid"
+                    StatusLabel.TextColor3 = Color3.fromRGB(255, 150, 0)
+                    task.wait(2)
+                    StatusLabel.Text = "⚡ READY TO ACTIVATE ⚡"
+                    StatusLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
+                end
+            end)
+        end
+    end
     
     -- Animate entrance
     MainFrame.BackgroundTransparency = 1
@@ -512,5 +559,13 @@ local function CreateGUI()
     print("GUI Created Successfully!")
 end
 
--- Create the GUI
+-- Start
+local player = game:GetService("Players").LocalPlayer
+local pGui = player:WaitForChild("PlayerGui")
+
+if pGui:FindFirstChild(Config.MainGuiName) then
+    StartMainScript()
+    return
+end
+
 CreateGUI()
