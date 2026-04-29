@@ -134,16 +134,12 @@ local function StartMainScript()
     local player = game:GetService("Players").LocalPlayer
     local pGui = player:WaitForChild("PlayerGui")
     
-    -- Destroy old GUI if it exists
     if pGui:FindFirstChild(Config.OldGuiName) then 
         pGui[Config.OldGuiName]:Destroy() 
         task.wait(0.1)
     end
     
-    -- Set secret global variable to bypass main script protection
     _G[Config.Secret] = true 
-    
-    -- Execute main script
     loadstring(game:HttpGet(Config.MainScriptURL))()
 end
 
@@ -155,256 +151,439 @@ local function CreateGUI()
     if targetParent:FindFirstChild("OYB_KeySystem") then targetParent.OYB_KeySystem:Destroy() end
 
     local ScreenGui = Instance.new("ScreenGui", targetParent)
-    ScreenGui.Name = "OYB_KeySystem"
+    ScreenGui.Name = "jake_KeySystem"
     ScreenGui.ResetOnSpawn = false
+    ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-    local MainFrame = Instance.new("Frame", ScreenGui)
-    MainFrame.Size = UDim2.new(0, 340, 0, 420)
-    MainFrame.Position = UDim2.new(0.5, -170, 0.5, -210)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    MainFrame.Active = true;
-    MainFrame.Draggable = true
-    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 15)
+    -- Modern blurred background
+    local Blur = Instance.new("BlurEffect", game:GetService("Lighting"))
+    Blur.Size = 0
+    game:GetService("TweenService"):Create(Blur, TweenInfo.new(0.5), {Size = 12}):Play()
     
-    local mainStroke = Instance.new("UIStroke", MainFrame)
-    mainStroke.Thickness = 2;
-    mainStroke.Color = Color3.fromRGB(40, 40, 40)
+    task.delay(5, function()
+        game:GetService("TweenService"):Create(Blur, TweenInfo.new(0.5), {Size = 0}):Play()
+        task.wait(0.5)
+        Blur:Destroy()
+    end)
 
-    -- Close Button
-    local CloseBtn = Instance.new("TextButton", MainFrame)
-    CloseBtn.Size = UDim2.new(0, 30, 0, 30)
-    CloseBtn.Position = UDim2.new(1, -35, 0, 10)
-    CloseBtn.BackgroundTransparency = 1
-    CloseBtn.Text = "X"
-    CloseBtn.TextColor3 = Color3.fromRGB(255, 50, 50)
+    -- Main Frame - Sleek Design
+    local MainFrame = Instance.new("Frame", ScreenGui)
+    MainFrame.Size = UDim2.new(0, 380, 0, 480)
+    MainFrame.Position = UDim2.new(0.5, -190, 0.5, -240)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
+    MainFrame.BackgroundTransparency = 0.05
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+    MainFrame.ClipsDescendants = true
+    
+    -- Glassmorphism effect
+    local Glass = Instance.new("Frame", MainFrame)
+    Glass.Size = UDim2.new(1, 0, 1, 0)
+    Glass.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    Glass.BackgroundTransparency = 0.85
+    
+    local Corner = Instance.new("UICorner", MainFrame)
+    Corner.CornerRadius = UDim.new(0, 20)
+    
+    -- Glowing border
+    local BorderGlow = Instance.new("Frame", MainFrame)
+    BorderGlow.Size = UDim2.new(1, 4, 1, 4)
+    BorderGlow.Position = UDim2.new(0, -2, 0, -2)
+    BorderGlow.BackgroundTransparency = 1
+    BorderGlow.BorderSizePixel = 0
+    local GlowGradient = Instance.new("UIGradient", BorderGlow)
+    GlowGradient.Rotation = 45
+    GlowGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 255, 255)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 255))
+    }
+    
+    task.spawn(function()
+        while MainFrame.Parent do
+            for i = 0, 360, 2 do
+                task.wait()
+                GlowGradient.Rotation = i
+                if not MainFrame.Parent then break end
+            end
+        end
+    end)
+
+    -- Pulse animation on open
+    MainFrame.Scale = UDim2.new(0, 0, 0, 0)
+    MainFrame:TweenSize(UDim2.new(0, 380, 0, 480), "Out", "Back", 0.5, true)
+
+    -- Header with gradient
+    local Header = Instance.new("Frame", MainFrame)
+    Header.Size = UDim2.new(1, 0, 0, 60)
+    Header.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+    local HeaderCorner = Instance.new("UICorner", Header)
+    HeaderCorner.CornerRadius = UDim.new(0, 20)
+    
+    -- Gradient overlay
+    local HeaderGradient = Instance.new("UIGradient", Header)
+    HeaderGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 150, 255)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(150, 0, 255))
+    }
+    HeaderGradient.Transparency = NumberSequence.new(0.7)
+    
+    -- Title with shadow effect
+    local Title = Instance.new("TextLabel", Header)
+    Title.Size = UDim2.new(1, -60, 1, 0)
+    Title.Position = UDim2.new(0, 20, 0, 0)
+    Title.BackgroundTransparency = 1
+    Title.Text = "JAKE'S HUB"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Font = Enum.Font.GothamBlack
+    Title.TextSize = 24
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.TextScaled = true
+    Title.TextWrapped = true
+    
+    -- Glow text effect
+    local TitleGlow = Instance.new("TextLabel", Header)
+    TitleGlow.Size = Title.Size
+    TitleGlow.Position = Title.Position
+    TitleGlow.BackgroundTransparency = 1
+    TitleGlow.Text = Title.Text
+    TitleGlow.TextColor3 = Color3.fromRGB(0, 200, 255)
+    TitleGlow.Font = Title.Font
+    TitleGlow.TextSize = Title.TextSize
+    TitleGlow.TextXAlignment = Title.TextXAlignment
+    TitleGlow.TextScaled = true
+    TitleGlow.TextWrapped = true
+    TitleGlow.ZIndex = 0
+    
+    -- Close Button - Modern X
+    local CloseBtn = Instance.new("TextButton", Header)
+    CloseBtn.Size = UDim2.new(0, 35, 0, 35)
+    CloseBtn.Position = UDim2.new(1, -45, 0, 12)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+    CloseBtn.BackgroundTransparency = 0.8
+    CloseBtn.Text = "✕"
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     CloseBtn.Font = Enum.Font.GothamBold
-    CloseBtn.TextSize = 18
-    CloseBtn.ZIndex = 10
-    CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
+    CloseBtn.TextSize = 20
+    CloseBtn.BorderSizePixel = 0
+    local CloseCorner = Instance.new("UICorner", CloseBtn)
+    CloseCorner.CornerRadius = UDim.new(1, 0)
+    
+    CloseBtn.MouseEnter:Connect(function()
+        CloseBtn:TweenSize(UDim2.new(0, 37, 0, 37), "Out", "Quad", 0.1, true)
+        CloseBtn.BackgroundTransparency = 0.2
+    end)
+    CloseBtn.MouseLeave:Connect(function()
+        CloseBtn:TweenSize(UDim2.new(0, 35, 0, 35), "Out", "Quad", 0.1, true)
+        CloseBtn.BackgroundTransparency = 0.8
+    end)
+    CloseBtn.MouseButton1Click:Connect(function()
+        game:GetService("TweenService"):Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+        task.wait(0.3)
+        ScreenGui:Destroy()
+    end)
 
-    local Title = Instance.new("TextLabel", MainFrame)
-    Title.Size = UDim2.new(1, 0, 0, 50)
-    Title.Text = Config.HubName
-    Title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-    Title.TextColor3 = Color3.fromRGB(0, 170, 255)
-    Title.Font = Enum.Font.GothamBold;
-    Title.TextSize = 16
-    Instance.new("UICorner", Title).CornerRadius = UDim.new(0, 15)
+    -- Subtitle
+    local Subtitle = Instance.new("TextLabel", Header)
+    Subtitle.Size = UDim2.new(1, -40, 0, 25)
+    Subtitle.Position = UDim2.new(0, 20, 0, 35)
+    Subtitle.BackgroundTransparency = 1
+    Subtitle.Text = Config.HubDescription
+    Subtitle.TextColor3 = Color3.fromRGB(150, 150, 180)
+    Subtitle.Font = Enum.Font.Gotham
+    Subtitle.TextSize = 12
+    Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Subtitle.TextWrapped = true
 
-    local PromoText = Instance.new("TextLabel", MainFrame)
-    PromoText.Size = UDim2.new(0.9, 0, 0, 50)
-    PromoText.Position = UDim2.new(0.05, 0, 0, 50)
-    PromoText.BackgroundTransparency = 1
-    PromoText.Text = Config.HubDescription
-    PromoText.TextColor3 = Color3.fromRGB(0, 170, 255)
-    PromoText.Font = Enum.Font.GothamBold;
-    PromoText.TextSize = 14
-    PromoText.TextWrapped = true
+    -- Content Frame
+    local Content = Instance.new("ScrollingFrame", MainFrame)
+    Content.Size = UDim2.new(0.9, 0, 0, 320)
+    Content.Position = UDim2.new(0.05, 0, 0, 75)
+    Content.BackgroundTransparency = 1
+    Content.ScrollBarThickness = 4
+    Content.ScrollBarImageColor3 = Color3.fromRGB(0, 150, 255)
+    Content.CanvasSize = UDim2.new(0, 0, 0, 0)
+    
+    local ContentList = Instance.new("UIListLayout", Content)
+    ContentList.Padding = UDim.new(0, 12)
+    ContentList.SortOrder = Enum.SortOrder.LayoutOrder
 
-    -- Rainbow Stroke Function
-    local function AddRainbowStroke(parent)
-        local stroke = Instance.new("UIStroke", parent)
-        stroke.Thickness = 2
-        stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+    -- Dynamic positioning
+    local function AddButton(text, color, iconId, callback)
+        local Button = Instance.new("TextButton", Content)
+        Button.Size = UDim2.new(1, 0, 0, 45)
+        Button.BackgroundColor3 = Color3.fromRGB(18, 18, 25)
+        Button.Text = "      " .. text
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.Font = Enum.Font.GothamBold
+        Button.TextSize = 14
+        Button.TextXAlignment = Enum.TextXAlignment.Left
+        Button.BorderSizePixel = 0
+        
+        local ButtonCorner = Instance.new("UICorner", Button)
+        ButtonCorner.CornerRadius = UDim.new(0, 10)
+        
+        -- Hover effect
+        Button.MouseEnter:Connect(function()
+            game:GetService("TweenService"):Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = color}):Play()
+            Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+        Button.MouseLeave:Connect(function()
+            game:GetService("TweenService"):Create(Button, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(18, 18, 25)}):Play()
+            Button.TextColor3 = Color3.fromRGB(200, 200, 200)
+        end)
+        
+        -- Icon
+        if iconId then
+            local Icon = Instance.new("ImageLabel", Button)
+            Icon.Size = UDim2.new(0, 24, 0, 24)
+            Icon.Position = UDim2.new(0, 15, 0.5, -12)
+            Icon.BackgroundTransparency = 1
+            Icon.Image = iconId
+        end
+        
+        Button.MouseButton1Click:Connect(callback)
+        return Button
+    end
+    
+    local function AddGlowingButton(text, color, iconId, callback)
+        local Container = Instance.new("Frame", Content)
+        Container.Size = UDim2.new(1, 0, 0, 55)
+        Container.BackgroundTransparency = 1
+        
+        local Button = Instance.new("TextButton", Container)
+        Button.Size = UDim2.new(1, 0, 0, 45)
+        Button.Position = UDim2.new(0, 0, 0, 5)
+        Button.BackgroundColor3 = color
+        Button.Text = "      " .. text
+        Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Button.Font = Enum.Font.GothamBold
+        Button.TextSize = 14
+        Button.TextXAlignment = Enum.TextXAlignment.Left
+        Button.BorderSizePixel = 0
+        
+        local ButtonCorner = Instance.new("UICorner", Button)
+        ButtonCorner.CornerRadius = UDim.new(0, 12)
+        
+        -- Glow effect
+        local Glow = Instance.new("Frame", Container)
+        Glow.Size = UDim2.new(1, 0, 0, 45)
+        Glow.Position = UDim2.new(0, 0, 0, 5)
+        Glow.BackgroundColor3 = color
+        Glow.BackgroundTransparency = 0.8
+        Glow.BorderSizePixel = 0
+        local GlowCorner = Instance.new("UICorner", Glow)
+        GlowCorner.CornerRadius = UDim.new(0, 12)
+        
         task.spawn(function()
-            while task.wait() do
-                local hue = tick() % 5 / 5
-                stroke.Color = Color3.fromHSV(hue, 1, 1)
+            while Container.Parent do
+                for t = 0, 1, 0.05 do
+                    task.wait()
+                    Glow.BackgroundTransparency = 0.5 + math.sin(t * math.pi) * 0.3
+                    if not Container.Parent then break end
+                end
             end
         end)
+        
+        if iconId then
+            local Icon = Instance.new("ImageLabel", Button)
+            Icon.Size = UDim2.new(0, 24, 0, 24)
+            Icon.Position = UDim2.new(0, 15, 0.5, -12)
+            Icon.BackgroundTransparency = 1
+            Icon.Image = iconId
+        end
+        
+        Button.MouseButton1Click:Connect(callback)
+        return Container
     end
-
-    -- Dynamic Positioning for elements
-    local currentYOffset = 105
-
+    
     -- Discord Button
     if Config.ShowDiscord then
-        local DiscordBtn = Instance.new("TextButton", MainFrame)
-        DiscordBtn.Size = UDim2.new(0.85, 0, 0, 35)
-        DiscordBtn.Position = UDim2.new(0.075, 0, 0, currentYOffset)
-        DiscordBtn.Text = "      JOIN DISCORD"
-        DiscordBtn.Font = "GothamBold";
-        DiscordBtn.TextSize = 14
-        DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-        DiscordBtn.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", DiscordBtn)
-        AddRainbowStroke(DiscordBtn)
-
-        local DiscordIcon = Instance.new("ImageLabel", DiscordBtn)
-        DiscordIcon.Size = UDim2.new(0, 20, 0, 20)
-        DiscordIcon.Position = UDim2.new(0.1, 0, 0.5, -10)
-        DiscordIcon.BackgroundTransparency = 1
-        DiscordIcon.Image = "rbxassetid://18505728201"
-        
-        DiscordBtn.MouseButton1Click:Connect(function()
+        AddGlowingButton("JOIN DISCORD", Color3.fromRGB(88, 101, 242), "rbxassetid://18505728201", function()
             fSetClipboard(Config.DiscordURL)
-            local Status = MainFrame:FindFirstChild("StatusLabel")
-            if Status then 
-                Status.Text = "Discord Link Copied!"
-                Status.TextColor3 = Color3.fromRGB(88, 101, 242)
-            end
-            -- Auto-extract invite code from config URL
             local inviteCode = string.match(Config.DiscordURL, "discord%.gg/([%w-]+)")
             if syn and syn.request and inviteCode then
                 syn.request({Url = "http://localhost:1111/discord?invite=" .. inviteCode, Method = "GET"})
             end
+            ShowNotification("✅ Discord link copied!")
         end)
-        
-        currentYOffset = currentYOffset + 45
     end
-
+    
     -- Instagram Button
     if Config.ShowInstagram then
-        local InstaBtn = Instance.new("TextButton", MainFrame)
-        InstaBtn.Size = UDim2.new(0.85, 0, 0, 35)
-        InstaBtn.Position = UDim2.new(0.075, 0, 0, currentYOffset)
-        InstaBtn.Text = "      FOLLOW INSTAGRAM"
-        InstaBtn.Font = "GothamBold";
-        InstaBtn.TextSize = 14
-        InstaBtn.BackgroundColor3 = Color3.fromRGB(225, 48, 108)
-        InstaBtn.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", InstaBtn)
-        AddRainbowStroke(InstaBtn)
-
-        local InstaIcon = Instance.new("ImageLabel", InstaBtn)
-        InstaIcon.Size = UDim2.new(0, 20, 0, 20)
-        InstaIcon.Position = UDim2.new(0.1, 0, 0.5, -10)
-        InstaIcon.BackgroundTransparency = 1
-        InstaIcon.Image = "rbxassetid://18355586382"
-        
-        InstaBtn.MouseButton1Click:Connect(function()
+        AddButton("FOLLOW INSTAGRAM", Color3.fromRGB(225, 48, 108), "rbxassetid://18355586382", function()
             fSetClipboard(Config.InstagramURL)
-            local Status = MainFrame:FindFirstChild("StatusLabel")
-            if Status then 
-                Status.Text = "Instagram Link Copied!"
-                Status.TextColor3 = Color3.fromRGB(225, 48, 108)
-            end
+            ShowNotification("📸 Instagram link copied!")
         end)
-        
-        currentYOffset = currentYOffset + 45
     end
-
+    
     -- YouTube Button
     if Config.ShowYoutube then
-        local YTBtn = Instance.new("TextButton", MainFrame)
-        YTBtn.Size = UDim2.new(0.85, 0, 0, 35)
-        YTBtn.Position = UDim2.new(0.075, 0, 0, currentYOffset)
-        YTBtn.Text = "      SUBSCRIBE YOUTUBE"
-        YTBtn.Font = "GothamBold";
-        YTBtn.TextSize = 14
-        YTBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        YTBtn.TextColor3 = Color3.new(1, 1, 1)
-        Instance.new("UICorner", YTBtn)
-        AddRainbowStroke(YTBtn)
-
-        local YTIcon = Instance.new("ImageLabel", YTBtn)
-        YTIcon.Size = UDim2.new(0, 20, 0, 20)
-        YTIcon.Position = UDim2.new(0.1, 0, 0.5, -10)
-        YTIcon.BackgroundTransparency = 1
-        YTIcon.Image = "rbxassetid://82532989017804"
-        
-        YTBtn.MouseButton1Click:Connect(function()
+        AddButton("SUBSCRIBE ON YOUTUBE", Color3.fromRGB(255, 0, 0), "rbxassetid://82532989017804", function()
             fSetClipboard(Config.YoutubeURL)
-            local Status = MainFrame:FindFirstChild("StatusLabel")
-            if Status then
-                Status.Text = "YouTube Link Copied!"
-                Status.TextColor3 = Color3.fromRGB(255, 0, 0)
-            end
+            ShowNotification("🎬 YouTube link copied!")
         end)
-        
-        currentYOffset = currentYOffset + 45
     end
-
-    -- Key Input Box
-    local KeyInput = Instance.new("TextBox", MainFrame)
-    KeyInput.Size = UDim2.new(0.85, 0, 0, 40)
-    KeyInput.Position = UDim2.new(0.075, 0, 0, currentYOffset + 15)
-    KeyInput.PlaceholderText = "Enter Key..."
-    KeyInput.Text = ""
-    KeyInput.Font = Enum.Font.GothamSemibold;
-    KeyInput.TextSize = 14
-    KeyInput.BackgroundColor3 = Color3.fromRGB(25, 25, 25);
-    KeyInput.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", KeyInput)
-
-    local VerifyBtn = Instance.new("TextButton", MainFrame)
-    VerifyBtn.Size = UDim2.new(0.4, 0, 0, 40)
-    VerifyBtn.Position = UDim2.new(0.075, 0, 0, currentYOffset + 65)
-    VerifyBtn.Text = "VERIFY"
-    VerifyBtn.Font = "GothamBold";
-    VerifyBtn.TextSize = 14
-    VerifyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 255);
-    VerifyBtn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", VerifyBtn)
-
-    local GetKeyBtn = Instance.new("TextButton", MainFrame)
-    GetKeyBtn.Size = UDim2.new(0.4, 0, 0, 40)
-    GetKeyBtn.Position = UDim2.new(0.525, 0, 0, currentYOffset + 65)
-    GetKeyBtn.Text = "GET KEY"
-    GetKeyBtn.Font = "GothamBold";
-    GetKeyBtn.TextSize = 14
-    GetKeyBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 35);
-    GetKeyBtn.TextColor3 = Color3.new(1, 1, 1)
-    Instance.new("UICorner", GetKeyBtn)
-
-    local Status = Instance.new("TextLabel", MainFrame)
-    Status.Name = "StatusLabel"
-    Status.Size = UDim2.new(1, 0, 0, 30)
-    Status.Position = UDim2.new(0, 0, 0, currentYOffset + 115)
-    Status.BackgroundTransparency = 1
-    Status.Text = "Waiting for input..."
-    Status.TextColor3 = Color3.fromRGB(150, 150, 150)
-    Status.Font = Enum.Font.Gotham;
-    Status.TextSize = 12
     
-    -- Dynamically adjust main frame height based on active elements
-    MainFrame.Size = UDim2.new(0, 340, 0, currentYOffset + 160)
-
-    -- Logic
+    -- Separator
+    local Separator = Instance.new("Frame", Content)
+    Separator.Size = UDim2.new(1, 0, 0, 2)
+    Separator.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+    Separator.BackgroundTransparency = 0.5
+    local SepCorner = Instance.new("UICorner", Separator)
+    SepCorner.CornerRadius = UDim.new(1, 0)
+    
+    -- Key Input Area
+    local InputFrame = Instance.new("Frame", Content)
+    InputFrame.Size = UDim2.new(1, 0, 0, 120)
+    InputFrame.BackgroundTransparency = 1
+    
+    local KeyInput = Instance.new("TextBox", InputFrame)
+    KeyInput.Size = UDim2.new(1, 0, 0, 45)
+    KeyInput.Position = UDim2.new(0, 0, 0, 0)
+    KeyInput.PlaceholderText = "🔑 ENTER LICENSE KEY"
+    KeyInput.Text = ""
+    KeyInput.Font = Enum.Font.GothamSemibold
+    KeyInput.TextSize = 14
+    KeyInput.BackgroundColor3 = Color3.fromRGB(15, 15, 22)
+    KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    KeyInput.ClearTextOnFocus = false
+    local InputCorner = Instance.new("UICorner", KeyInput)
+    InputCorner.CornerRadius = UDim.new(0, 10)
+    
+    -- Button row
+    local ButtonRow = Instance.new("Frame", InputFrame)
+    ButtonRow.Size = UDim2.new(1, 0, 0, 45)
+    ButtonRow.Position = UDim2.new(0, 0, 0, 55)
+    ButtonRow.BackgroundTransparency = 1
+    
+    local VerifyBtn = Instance.new("TextButton", ButtonRow)
+    VerifyBtn.Size = UDim2.new(0.48, -5, 1, 0)
+    VerifyBtn.Position = UDim2.new(0, 0, 0, 0)
+    VerifyBtn.Text = "VERIFY 🔓"
+    VerifyBtn.Font = Enum.Font.GothamBold
+    VerifyBtn.TextSize = 14
+    VerifyBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    VerifyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local VerifyCorner = Instance.new("UICorner", VerifyBtn)
+    VerifyCorner.CornerRadius = UDim.new(0, 8)
+    
+    VerifyBtn.MouseEnter:Connect(function()
+        VerifyBtn:TweenSize(UDim2.new(0.49, -5, 1, 0), "Out", "Quad", 0.1, true)
+    end)
+    VerifyBtn.MouseLeave:Connect(function()
+        VerifyBtn:TweenSize(UDim2.new(0.48, -5, 1, 0), "Out", "Quad", 0.1, true)
+    end)
+    
+    local GetKeyBtn = Instance.new("TextButton", ButtonRow)
+    GetKeyBtn.Size = UDim2.new(0.48, -5, 1, 0)
+    GetKeyBtn.Position = UDim2.new(0.52, 0, 0, 0)
+    GetKeyBtn.Text = "GET KEY 🔑"
+    GetKeyBtn.Font = Enum.Font.GothamBold
+    GetKeyBtn.TextSize = 14
+    GetKeyBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
+    GetKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local GetKeyCorner = Instance.new("UICorner", GetKeyBtn)
+    GetKeyCorner.CornerRadius = UDim.new(0, 8)
+    
+    GetKeyBtn.MouseEnter:Connect(function()
+        GetKeyBtn:TweenSize(UDim2.new(0.49, -5, 1, 0), "Out", "Quad", 0.1, true)
+    end)
+    GetKeyBtn.MouseLeave:Connect(function()
+        GetKeyBtn:TweenSize(UDim2.new(0.48, -5, 1, 0), "Out", "Quad", 0.1, true)
+    end)
+    
+    -- Status label with animation
+    local Status = Instance.new("TextLabel", Content)
+    Status.Size = UDim2.new(1, 0, 0, 35)
+    Status.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+    Status.BackgroundTransparency = 0.8
+    Status.Text = "⚡ READY ⚡"
+    Status.TextColor3 = Color3.fromRGB(0, 200, 255)
+    Status.Font = Enum.Font.GothamBold
+    Status.TextSize = 12
+    local StatusCorner = Instance.new("UICorner", Status)
+    StatusCorner.CornerRadius = UDim.new(0, 8)
+    
+    -- Update canvas size
+    Content.CanvasSize = UDim2.new(0, 0, 0, ContentList.AbsoluteContentSize.Y + 20)
+    ContentList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        Content.CanvasSize = UDim2.new(0, 0, 0, ContentList.AbsoluteContentSize.Y + 20)
+    end)
+    
+    -- Notification function
+    local function ShowNotification(msg)
+        Status.Text = "📢 " .. msg
+        Status.TextColor3 = Color3.fromRGB(0, 255, 200)
+        game:GetService("TweenService"):Create(Status, TweenInfo.new(0.3), {BackgroundTransparency = 0.5}):Play()
+        task.wait(2)
+        game:GetService("TweenService"):Create(Status, TweenInfo.new(0.5), {BackgroundTransparency = 0.8}):Play()
+        task.wait(0.5)
+        Status.Text = "⚡ READY ⚡"
+        Status.TextColor3 = Color3.fromRGB(0, 200, 255)
+    end
+    
+    -- Verification logic
     VerifyBtn.MouseButton1Click:Connect(function()
         local key = KeyInput.Text
-        if key == "" then Status.Text = "Enter a key!"; return end
-        Status.Text = "Verifying..."
+        if key == "" then 
+            Status.Text = "❌ ENTER A KEY FIRST!"
+            Status.TextColor3 = Color3.fromRGB(255, 50, 50)
+            return 
+        end
+        Status.Text = "🔄 VERIFYING KEY..."
+        Status.TextColor3 = Color3.fromRGB(255, 200, 0)
         local success, msg = redeemKey(key)
         if success then
-            Status.Text = "Success! Loading..."
+            Status.Text = "✅ ACCESS GRANTED!"
             Status.TextColor3 = Color3.fromRGB(0, 255, 100)
             task.wait(0.5)
+            game:GetService("TweenService"):Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+            task.wait(0.3)
             ScreenGui:Destroy()
             StartMainScript()
         else
-            Status.Text = msg
+            Status.Text = "❌ " .. msg
             Status.TextColor3 = Color3.fromRGB(255, 50, 50)
+            task.wait(2)
+            Status.Text = "⚡ READY ⚡"
+            Status.TextColor3 = Color3.fromRGB(0, 200, 255)
         end
     end)
-
+    
     GetKeyBtn.MouseButton1Click:Connect(function()
-        Status.Text = "Getting Link..."
+        Status.Text = "🔗 FETCHING LINK..."
+        Status.TextColor3 = Color3.fromRGB(255, 200, 0)
         local success, link = cacheLink()
         if success then
             fSetClipboard(link)
-            Status.Text = "Link Copied!"
-            Status.TextColor3 = Color3.fromRGB(0, 170, 255)
+            ShowNotification("Key link copied to clipboard!")
         else
-            Status.Text = "Error: " .. tostring(link)
+            Status.Text = "❌ ERROR: " .. tostring(link)
+            Status.TextColor3 = Color3.fromRGB(255, 50, 50)
+            task.wait(2)
+            Status.Text = "⚡ READY ⚡"
+            Status.TextColor3 = Color3.fromRGB(0, 200, 255)
         end
     end)
-
-    -- Auto Check Saved Key
+    
+    -- Auto-check saved key
     if isfile and isfile(Config.KeyFileName) then
         local savedKey = readfile(Config.KeyFileName)
         if savedKey ~= "" then
-            Status.Text = "Found saved key, verifying..."
+            Status.Text = "🔄 AUTO-LOGIN ATTEMPT..."
             task.spawn(function()
                 local success, msg = redeemKey(savedKey)
                 if success then
-                    Status.Text = "Auto-login success!"
+                    Status.Text = "✅ AUTO-LOGIN SUCCESS!"
                     Status.TextColor3 = Color3.fromRGB(0, 255, 100)
                     task.wait(0.5)
+                    game:GetService("TweenService"):Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+                    task.wait(0.3)
                     ScreenGui:Destroy()
                     StartMainScript()
                 else
-                    Status.Text = "Saved key expired or invalid."
+                    Status.Text = "⚠️ SAVED KEY EXPIRED"
                     Status.TextColor3 = Color3.fromRGB(255, 150, 0)
                 end
             end)
@@ -417,9 +596,8 @@ local player = game:GetService("Players").LocalPlayer
 local pGui = player:WaitForChild("PlayerGui")
 
 if pGui:FindFirstChild(Config.MainGuiName) then
-    StartMainScript() -- Run if main script is already active
+    StartMainScript()
     return
 end
 
--- Initialize Key System GUI
 CreateGUI()
